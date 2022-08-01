@@ -22,4 +22,8 @@ public class UserDao {
     private String salt;
     @Column(name = "name")
     private String name;
+    @Column(name = "validation_code")
+    private String validationCode;
+    @Column(name = "is_valid")
+    private Boolean isValid;
 }
