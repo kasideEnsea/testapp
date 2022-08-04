@@ -3,6 +3,7 @@ package com.example.testapp.controller;
 
 import com.example.testapp.dto.AuthUser;
 import com.example.testapp.dto.LoginDataDto;
+import com.example.testapp.dto.ValidDto;
 import com.example.testapp.service.AuthorizationService;
 import com.example.testapp.service.RegistrationService;
 import lombok.RequiredArgsConstructor;
@@ -23,8 +24,10 @@ public class RegistrationController {
     }
 
     //Подтверждение адреса почты пользователя
-    @GetMapping("/{id}/{code}")
-    public AuthUser validate(@PathVariable int id, @PathVariable String code) {
+    @GetMapping("/valid/")
+    public AuthUser validate(@Valid @RequestBody ValidDto dto) {
+        int id = dto.getId();
+        String code = dto.getCode();
         registrationService.validate(id, code);
         return authorizationService.authorizeNewUser(id);
     }
