@@ -7,4 +7,5 @@ import java.util.LinkedList;
 
 public interface QuestionCrud extends CrudRepository<QuestionDao, Integer> {
     LinkedList<QuestionDao> getByTestId (int testId);
+    QuestionDao getById (int id);
 }
