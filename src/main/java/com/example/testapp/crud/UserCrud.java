@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface UserCrud extends CrudRepository<UserDao, Integer> {
     boolean existsByEmail(String email);
-    UserDao getDistinctByEmail(String email);
     UserDao getById(int id);
     ArrayList<UserDao> getByEmail(String email);
+    UserDao getDistinctByEmail(String email);
 }

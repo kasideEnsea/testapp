@@ -24,9 +24,10 @@ public class RegistrationService {
 
     public void register(String email, String password, String name) {
         if (userCrud.existsByEmail(email)) {
-            if (userCrud.getDistinctByEmail(email).getIsValid()){
+            if (userCrud.getByEmail(email).get(0).getIsValid()){
                 throw new WebException("Email is already used", HttpStatus.BAD_REQUEST);
             }
+            throw new WebException("Email is no valid", HttpStatus.FORBIDDEN);
         }
 
         //Невалидированные данные пользователя сохраняются в базу

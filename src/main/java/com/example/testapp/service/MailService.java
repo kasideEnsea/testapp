@@ -10,7 +10,8 @@ public class MailService {
 
     public static final String validationSubject = "Ссылка для подтверждения email";
     public static final String validationText = "Ссылка для подтверждения email для сайта testapp.com.\n";
-    public static final String registrationCodeLink = "http://localhost:4200/registration/";
+    public static final String registrationCodeLink = "http://localhost:4200/";
+    public static final String from = "testapplication@inbox.ru";
 
     @Autowired
     public JavaMailSender emailSender;
@@ -20,7 +21,8 @@ public class MailService {
         SimpleMailMessage simpleMailMessage = new SimpleMailMessage();
         simpleMailMessage.setTo(email);
         simpleMailMessage.setSubject(validationSubject);
-        simpleMailMessage.setText(validationText+registrationCodeLink+id+'/'+code);
+        simpleMailMessage.setText(validationText+registrationCodeLink+"id:"+id+"/"+"code:"+code);
+        simpleMailMessage.setFrom(from);
         emailSender.send(simpleMailMessage);
     }
 }
