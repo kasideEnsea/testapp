@@ -1,4 +1,4 @@
-package com.example.testapp.dao;
+package com.example.testapp.entity;
 
 import lombok.Data;
 
@@ -7,7 +7,7 @@ import javax.persistence.*;
 @Entity
 @Table(name = "link")
 @Data
-public class LinkDao {
+public class Link {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")

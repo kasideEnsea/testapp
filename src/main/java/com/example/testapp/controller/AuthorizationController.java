@@ -1,6 +1,6 @@
 package com.example.testapp.controller;
 
-import com.example.testapp.dto.AuthUser;
+import com.example.testapp.dto.AuthUserDto;
 import com.example.testapp.dto.LoginDataDto;
 import com.example.testapp.service.AuthorizationService;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +18,7 @@ public class AuthorizationController {
     private final AuthorizationService authorizationService;
 
     @PostMapping("/")
-    public AuthUser authUser(@Valid @RequestBody LoginDataDto loginOptionsDto) {
+    public AuthUserDto authUser(@Valid @RequestBody LoginDataDto loginOptionsDto) {
         return authorizationService.authorizeUser(loginOptionsDto.getEmail(), loginOptionsDto.getPassword());
     }
 }

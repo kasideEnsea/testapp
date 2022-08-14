@@ -1,15 +1,21 @@
 package com.example.testapp.entity;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 
-import javax.persistence.Column;
+import javax.persistence.*;
 
+@Entity
+@Table(name = "option")
 @Data
-@AllArgsConstructor
 public class Option {
-    Integer id;
-    Integer questionId;
-    String text;
-    Boolean isCorrect;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
+    private Integer id;
+    @Column(name = "question_id")
+    private Integer questionId;
+    @Column(name = "text")
+    private String text;
+    @Column(name = "isCorrect")
+    private Boolean isCorrect;
 }

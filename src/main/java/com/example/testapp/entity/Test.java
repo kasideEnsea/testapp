@@ -1,15 +1,19 @@
 package com.example.testapp.entity;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 
-import java.util.LinkedList;
+import javax.persistence.*;
 
+@Entity
+@Table(name = "test")
 @Data
-@AllArgsConstructor
 public class Test {
-    Integer id;
-    String name;
-    LinkedList<Question> questions;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
+    private Integer id;
+    @Column(name = "user_id")
+    private Integer userId;
+    @Column(name = "name")
+    private String name;
 }
-

@@ -1,9 +1,9 @@
 package com.example.testapp.service;
 
 import com.example.testapp.converter.UserConverter;
-import com.example.testapp.crud.UserCrud;
-import com.example.testapp.dao.UserDao;
-import com.example.testapp.dto.AuthUser;
+import com.example.testapp.dao.UserRepository;
+import com.example.testapp.entity.User;
+import com.example.testapp.dto.AuthUserDto;
 import com.example.testapp.exception.WebException;
 import com.example.testapp.security.HashUtills;
 import com.example.testapp.security.JwtTokenProvider;
@@ -19,18 +19,18 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class AuthorizationService {
     private final JwtTokenProvider jwtTokenProvider;
-    private final UserCrud userCrud;
+    private final UserRepository userRepository;
 
     //Авторизация пользователя по email и паролю
-    public AuthUser authorizeUser(String email, String password) {
+    public AuthUserDto authorizeUser(String email, String password) {
         try {
-            UserDao userDao = authUser(email, password);
+            User userDao = authUser(email, password);
             int userId = userDao.getId();
             String tokenLogin = String.format("%d %s", userId, email);
             String token = jwtTokenProvider.createToken(tokenLogin);
             userDao.setPassToken(JwtTokenProvider.BEARER + token);
-            userCrud.save(userDao);
-            return new AuthUser(UserConverter.daoToUser(userDao), JwtTokenProvider.BEARER + token);
+            userRepository.save(userDao);
+            return new AuthUserDto(UserConverter.entityToUser(userDao), JwtTokenProvider.BEARER + token);
         } catch (Exception e) {
             log.error("Error during authorization", e);
             throw e;
@@ -38,11 +38,11 @@ public class AuthorizationService {
     }
 
     //Проверка совпадения логина и пароля
-    private UserDao authUser(String email, String password) {
-        if (!userCrud.existsByEmail(email)) {
+    private User authUser(String email, String password) {
+        if (!userRepository.existsByEmail(email)) {
             throw new WebException("Login doesn't exist", HttpStatus.UNAUTHORIZED);
         }
-        UserDao dao = userCrud.getDistinctByEmail(email);
+        User dao = userRepository.getDistinctByEmail(email);
         if(!Objects.equals(HashUtills.hashPassword(password, dao.getSalt()), dao.getPassword())){
             throw new WebException("Wrong password", HttpStatus.FORBIDDEN);
         }
@@ -50,15 +50,15 @@ public class AuthorizationService {
     }
 
     //Авторизация пользователя по айди. Используется в случае перехода по ссылке валидации email.
-    public AuthUser authorizeNewUser(int id) {
+    public AuthUserDto authorizeNewUser(int id) {
         try {
-            UserDao userDao = userCrud.getById(id);
+            User userDao = userRepository.getById(id);
             String email = userDao.getEmail();
             String tokenLogin = String.format("%d %s", id, email);
             String token = jwtTokenProvider.createToken(tokenLogin);
             userDao.setPassToken(JwtTokenProvider.BEARER + token);
-            userCrud.save(userDao);
-            return new AuthUser(UserConverter.daoToUser(userDao), JwtTokenProvider.BEARER + token);
+            userRepository.save(userDao);
+            return new AuthUserDto(UserConverter.entityToUser(userDao), JwtTokenProvider.BEARER + token);
         } catch (Exception e) {
             log.error("Error during authorization", e);
             throw e;

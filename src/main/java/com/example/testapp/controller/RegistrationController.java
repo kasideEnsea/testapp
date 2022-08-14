@@ -1,7 +1,7 @@
 package com.example.testapp.controller;
 
 
-import com.example.testapp.dto.AuthUser;
+import com.example.testapp.dto.AuthUserDto;
 import com.example.testapp.dto.LoginDataDto;
 import com.example.testapp.dto.ValidDto;
 import com.example.testapp.service.AuthorizationService;
@@ -25,7 +25,7 @@ public class RegistrationController {
 
     //Подтверждение адреса почты пользователя
     @PostMapping("/valid/")
-    public AuthUser validate(@Valid @RequestBody ValidDto dto) {
+    public AuthUserDto validate(@Valid @RequestBody ValidDto dto) {
         System.out.println(dto);
         int id = dto.getId();
         String code = dto.getCode();

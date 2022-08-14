@@ -1,13 +1,12 @@
 package com.example.testapp.service;
 
-import com.example.testapp.crud.UserCrud;
-import com.example.testapp.dao.UserDao;
+import com.example.testapp.dao.UserRepository;
+import com.example.testapp.entity.User;
 import com.example.testapp.exception.WebException;
 import com.example.testapp.security.HashUtills;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -19,12 +18,12 @@ public class RegistrationService {
     @Autowired
     public MailService mailService;
 
-    private final UserCrud userCrud;
+    private final UserRepository userRepository;
 
 
     public void register(String email, String password, String name) {
-        if (userCrud.existsByEmail(email)) {
-            if (userCrud.getByEmail(email).get(0).getIsValid()){
+        if (userRepository.existsByEmail(email)) {
+            if (userRepository.getByEmail(email).get(0).getIsValid()){
                 throw new WebException("Email is already used", HttpStatus.BAD_REQUEST);
             }
             throw new WebException("Email is no valid", HttpStatus.FORBIDDEN);
@@ -33,38 +32,38 @@ public class RegistrationService {
         //Невалидированные данные пользователя сохраняются в базу
         String salt = HashUtills.generateSalt(10);
         password = HashUtills.hashPassword(password, salt);
-        UserDao userDao = new UserDao();
+        User userDao = new User();
         userDao.setEmail(email);
         userDao.setName(name);
         userDao.setPassword(password);
         userDao.setSalt(salt);
         userDao.setIsValid(false);
-        userCrud.save(userDao);
+        userRepository.save(userDao);
 
         //Генерируется рандомная ссылка для подтверждения email, сохраняется в базу и отправляется на почту пользователя
-        UserDao savedUser = userCrud.getDistinctByEmail(email);
+        User savedUser = userRepository.getDistinctByEmail(email);
         String code = HashUtills.generateRandomAlphanumericString(10);
         mailService.sendValidationEmail(email, code, savedUser.getId());
         savedUser.setValidationCode(code);
-        userCrud.save(savedUser);
+        userRepository.save(savedUser);
     }
 
     //Сравнение ссылки для подтверждения email из базы с ссылкой, по которой перешел пользователь
     public void validate(int id, String code){
-        if (!userCrud.existsById(id)) {
+        if (!userRepository.existsById(id)) {
             throw new WebException("User is not found", HttpStatus.NOT_FOUND);
         }
-        UserDao userDao = userCrud.getById(id);
+        User userDao = userRepository.getById(id);
         if (!userDao.getValidationCode().equals(code)){
             throw new WebException("Wrong link", HttpStatus.FORBIDDEN);
         }
         userDao.setValidationCode(null);
         userDao.setIsValid(true);
-        ArrayList<UserDao> sameEmails = userCrud.getByEmail(userDao.getEmail());
-        for (UserDao se: sameEmails
+        ArrayList<User> sameEmails = userRepository.getByEmail(userDao.getEmail());
+        for (User se: sameEmails
              ) {
             if (se.getId()!=id){
-                userCrud.delete(se);
+                userRepository.delete(se);
             }
         }
     }

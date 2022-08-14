@@ -1,19 +1,19 @@
 package com.example.testapp.converter;
 
-import com.example.testapp.dao.OptionDao;
 import com.example.testapp.entity.Option;
+import com.example.testapp.dto.OptionDto;
 
 public class OptionConverter {
-    public static Option daoToOption(OptionDao dao){
-        return new Option(dao.getId(), dao.getQuestionId(), dao.getText(), dao.getIsCorrect());
+    public static OptionDto entityToOption(Option entity){
+        return new OptionDto(entity.getId(), entity.getQuestionId(), entity.getText(), entity.getIsCorrect());
     }
 
-    public static OptionDao optionToDao(Option option){
-        OptionDao dao = new OptionDao();
-        dao.setId(option.getId());
-        dao.setIsCorrect(option.getIsCorrect());
-        dao.setText(option.getText());
-        dao.setQuestionId(option.getQuestionId());
-        return dao;
+    public static Option optionToEntity(OptionDto option){
+        Option entity = new Option();
+        entity.setId(option.getId());
+        entity.setIsCorrect(option.getIsCorrect());
+        entity.setText(option.getText());
+        entity.setQuestionId(option.getQuestionId());
+        return entity;
     }
 }

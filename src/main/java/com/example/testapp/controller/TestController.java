@@ -1,6 +1,6 @@
 package com.example.testapp.controller;
 
-import com.example.testapp.entity.Test;
+import com.example.testapp.dto.TestDto;
 import com.example.testapp.service.TestService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -14,22 +14,22 @@ public class TestController {
     private final TestService testService;
 
     @GetMapping("/")
-    public List<Test> getAllTests() {
+    public List<TestDto> getAllTests() {
         return testService.getAll();
     }
 
     @GetMapping("/{id}")
-    public Test getTestById(@PathVariable int id){
+    public TestDto getTestById(@PathVariable int id){
         return testService.getById(id);
     }
 
     @PostMapping("/add")
-    public Test addTest (@RequestBody Test test) {
+    public TestDto addTest (@RequestBody TestDto test) {
         return testService.addTest(test);
     }
 
     @PostMapping("/edit")
-    public Test editTest (@RequestBody Test test) {
+    public TestDto editTest (@RequestBody TestDto test) {
         return testService.edit(test);
     }
 

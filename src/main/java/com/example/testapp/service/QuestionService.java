@@ -1,14 +1,13 @@
 package com.example.testapp.service;
 import com.example.testapp.converter.OptionConverter;
 import com.example.testapp.converter.QuestionConverter;
-import com.example.testapp.crud.OptionCrud;
-import com.example.testapp.crud.QuestionCrud;
-import com.example.testapp.dao.OptionDao;
-import com.example.testapp.dao.QuestionDao;
+import com.example.testapp.dao.OptionRepository;
+import com.example.testapp.dao.QuestionRepository;
 import com.example.testapp.entity.Option;
 import com.example.testapp.entity.Question;
+import com.example.testapp.dto.OptionDto;
+import com.example.testapp.dto.QuestionDto;
 import com.example.testapp.exception.WebException;
-import com.example.testapp.security.CurrentUserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -18,69 +17,69 @@ import java.util.LinkedList;
 @Service
 @RequiredArgsConstructor
 public class QuestionService {
-    private final QuestionCrud questionCrud;
-    private final OptionCrud optionCrud;
+    private final QuestionRepository questionRepository;
+    private final OptionRepository optionRepository;
 
-    public LinkedList<Question> getAllByTestId(int testId) {
-        LinkedList<QuestionDao> daoList = questionCrud.getByTestId(testId);
-        LinkedList<Question> questions = new LinkedList<>();
-        for (QuestionDao questionDao: daoList
+    public LinkedList<QuestionDto> getAllByTestId(int testId) {
+        LinkedList<Question> daoList = questionRepository.getByTestId(testId);
+        LinkedList<QuestionDto> questions = new LinkedList<>();
+        for (Question questionDao: daoList
         ) {
-            LinkedList<OptionDao> optionDaos = optionCrud.getByQuestionId(questionDao.getId());
-            questions.add(QuestionConverter.daoToQuestion(questionDao, optionDaos));
+            LinkedList<Option> optionDaos = optionRepository.getByQuestionId(questionDao.getId());
+            questions.add(QuestionConverter.entityToQuestion(questionDao, optionDaos));
         }
         return questions;
     }
 
-    public Question getById(int id){
-        if (!questionCrud.existsById(id)) {
+    public QuestionDto getById(int id){
+        if (!questionRepository.existsById(id)) {
             throw new WebException("Question doesn't exist", HttpStatus.NOT_FOUND);
         }
-        QuestionDao dao = questionCrud.getById(id);
-        LinkedList<OptionDao> optionDaos = optionCrud.getByQuestionId(dao.getId());
-        return QuestionConverter.daoToQuestion(dao, optionDaos);
+        Question dao = questionRepository.getById(id);
+        LinkedList<Option> optionDaos = optionRepository.getByQuestionId(dao.getId());
+        return QuestionConverter.entityToQuestion(dao, optionDaos);
     }
 
-    public Question addQuestion(Question question, int testId){
-        if (questionCrud.existsById(question.getId())) {
+    public QuestionDto addQuestion(QuestionDto question, int testId){
+        if (questionRepository.existsById(question.getId())) {
             throw new WebException("Question exists", HttpStatus.BAD_REQUEST);
         }
-        LinkedList<OptionDao> optionDaos = new LinkedList<>();
-        for (Option option: question.getOptions()
+        LinkedList<Option> optionDaos = new LinkedList<>();
+        for (OptionDto option: question.getOptions()
              ) {
             option.setQuestionId(question.getId());
-            OptionDao optionDao = OptionConverter.optionToDao(option);
-            optionCrud.save(optionDao);
+            Option optionDao = OptionConverter.optionToEntity(option);
+            optionRepository.save(optionDao);
         }
-        QuestionDao questionDao = QuestionConverter.questionToDao(question, testId);
-        questionCrud.save(questionDao);
+        Question questionDao = QuestionConverter.questionToEntity(question, testId);
+        questionRepository.save(questionDao);
         return question;
     }
 
     public void deleteQuestion(int questionId){
-        questionCrud.deleteById(questionId);
+        questionRepository.deleteById(questionId);
     }
 
-    public Question editQuestion (Question question){
-        if (!questionCrud.existsById(question.getId())){
+    public QuestionDto editQuestion (QuestionDto question){
+        if (!questionRepository.existsById(question.getId())){
             throw new WebException("Question doesn't exist", HttpStatus.NOT_FOUND);
         }
-        QuestionDao oldQuestionDao = questionCrud.getById(question.getId());
+        Question oldQuestionDao = questionRepository.getById(question.getId());
         if (!question.getText().equals(oldQuestionDao.getText())){
             oldQuestionDao.setText(question.getText());
         }
-        questionCrud.save(oldQuestionDao);
-        LinkedList<OptionDao> optionDaos = optionCrud.getByQuestionId(question.getId());
-        for (Option newOption: question.getOptions()
+        questionRepository.save(oldQuestionDao);
+        LinkedList<Option> optionDaos = optionRepository.getByQuestionId(question.getId());
+        for (OptionDto newOption: question.getOptions()
              ) {
             newOption.setQuestionId(question.getId());
-            OptionDao optionDao = OptionConverter.optionToDao(newOption);
-            optionCrud.save(optionDao);
+            Option optionDao = OptionConverter.optionToEntity(newOption);
+            optionRepository.save(optionDao);
             }
-        for (OptionDao optionDao: optionDaos
+        for (Option optionDao: optionDaos
              ) {
             boolean existsInNewQuestion = false;
-            for (Option newOption: question.getOptions()
+            for (OptionDto newOption: question.getOptions()
                  ) {
                 if (optionDao.getId().equals(newOption.getId())) {
                     existsInNewQuestion = true;
@@ -88,7 +87,7 @@ public class QuestionService {
                 }
             }
             if (!existsInNewQuestion){
-                optionCrud.delete(optionDao);
+                optionRepository.delete(optionDao);
             }
         }
         return question;
