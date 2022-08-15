@@ -7,6 +7,7 @@ import com.example.testapp.entity.Option;
 import com.example.testapp.entity.Question;
 import com.example.testapp.dto.OptionDto;
 import com.example.testapp.dto.QuestionDto;
+import com.example.testapp.entity.Test;
 import com.example.testapp.exception.WebException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -91,5 +92,11 @@ public class QuestionService {
             }
         }
         return question;
+    }
+
+    public QuestionDto addOptionInQuestion(OptionDto optionDto, int id){
+        Option option = OptionConverter.optionToEntity(optionDto);
+        optionRepository.save(option);
+        return getById(id);
     }
 }

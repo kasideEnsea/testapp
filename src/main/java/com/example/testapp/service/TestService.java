@@ -46,8 +46,11 @@ public class TestService {
     }
 
     public TestDto addTest(TestDto test){
-        if (testRepository.existsById(test.getId()) || testRepository.existsByName(test.getName())){
+        if (testRepository.existsById(test.getId())){
             throw new WebException("Test already exists", HttpStatus.BAD_REQUEST);
+        }
+        if (testRepository.existsByName(test.getName())){
+            test.setName(test.getName()+"-copy");
         }
         Test testDao = TestConverter.testToEntity(test, CurrentUserService.getUserId());
         testRepository.save(testDao);
@@ -87,7 +90,6 @@ public class TestService {
         }
         return test;
     }
-
 
 
     public void delete(int testId){
