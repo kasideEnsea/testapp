@@ -19,9 +19,14 @@ import java.util.List;
 public class QuestionController {
     private final QuestionService questionService;
 
-    @PostMapping("/add/{id}")
+    @PostMapping("/addopt/{id}")
     public QuestionDto addOption (@PathVariable Integer id, @RequestBody OptionDto option) {
         return questionService.addOptionInQuestion(option, id);
+    }
+
+    @PostMapping("/add/{id}")
+    public QuestionDto addQuestion (@PathVariable Integer id, @RequestBody QuestionDto questionDto) {
+        return questionService.addQuestion(questionDto, id);
     }
 
     @PostMapping("/del/{id}")
