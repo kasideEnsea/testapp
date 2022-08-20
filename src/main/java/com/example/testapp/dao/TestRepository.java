@@ -8,5 +8,5 @@ import java.util.LinkedList;
 public interface TestRepository extends CrudRepository<Test, Integer> {
     LinkedList<Test> getByUserId(int userId);
     Test getById (int id);
-    boolean existsByName(String name);
+    boolean existsByNameAndUserId(String name, int id);
 }

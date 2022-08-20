@@ -7,7 +7,6 @@ import com.example.testapp.entity.Option;
 import com.example.testapp.entity.Question;
 import com.example.testapp.dto.OptionDto;
 import com.example.testapp.dto.QuestionDto;
-import com.example.testapp.entity.Test;
 import com.example.testapp.exception.WebException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -26,7 +25,7 @@ public class QuestionService {
         LinkedList<QuestionDto> questions = new LinkedList<>();
         for (Question questionDao: daoList
         ) {
-            LinkedList<Option> optionDaos = optionRepository.getByQuestionId(questionDao.getId());
+            LinkedList<Option> optionDaos = optionRepository.getAllByQuestionId(questionDao.getId());
             questions.add(QuestionConverter.entityToQuestion(questionDao, optionDaos));
         }
         return questions;
@@ -37,20 +36,21 @@ public class QuestionService {
             throw new WebException("Question doesn't exist", HttpStatus.NOT_FOUND);
         }
         Question dao = questionRepository.getById(id);
-        LinkedList<Option> optionDaos = optionRepository.getByQuestionId(dao.getId());
+        LinkedList<Option> optionDaos = optionRepository.getAllByQuestionId(dao.getId());
         return QuestionConverter.entityToQuestion(dao, optionDaos);
     }
 
     public QuestionDto addQuestion(QuestionDto question, int testId){
         if (questionRepository.existsById(question.getId())) {
-            throw new WebException("Question exists", HttpStatus.BAD_REQUEST);
+            editQuestion(question);
         }
-        LinkedList<Option> optionDaos = new LinkedList<>();
         for (OptionDto option: question.getOptions()
              ) {
-            option.setQuestionId(question.getId());
-            Option optionDao = OptionConverter.optionToEntity(option);
-            optionRepository.save(optionDao);
+            if (option.getText().length()>0){
+                option.setQuestionId(question.getId());
+                Option optionDao = OptionConverter.optionToEntity(option);
+                optionRepository.save(optionDao);
+            }
         }
         Question questionDao = QuestionConverter.questionToEntity(question, testId);
         questionRepository.save(questionDao);
@@ -58,7 +58,10 @@ public class QuestionService {
     }
 
     public void deleteQuestion(int questionId){
-        questionRepository.deleteById(questionId);
+        if (questionRepository.existsById(questionId)) {
+            questionRepository.deleteById(questionId);
+        }
+
     }
 
     public QuestionDto editQuestion (QuestionDto question){
@@ -70,19 +73,20 @@ public class QuestionService {
             oldQuestionDao.setText(question.getText());
         }
         questionRepository.save(oldQuestionDao);
-        LinkedList<Option> optionDaos = optionRepository.getByQuestionId(question.getId());
-        for (OptionDto newOption: question.getOptions()
-             ) {
-            newOption.setQuestionId(question.getId());
-            Option optionDao = OptionConverter.optionToEntity(newOption);
-            optionRepository.save(optionDao);
+        LinkedList<Option> optionDaos = optionRepository.getAllByQuestionId(question.getId());
+        for (OptionDto newOption: question.getOptions()) {
+            if (newOption.getText().length()>0) {
+                newOption.setQuestionId(question.getId());
+                Option optionDao = OptionConverter.optionToEntity(newOption);
+                optionRepository.save(optionDao);
             }
+        }
         for (Option optionDao: optionDaos
              ) {
             boolean existsInNewQuestion = false;
             for (OptionDto newOption: question.getOptions()
                  ) {
-                if (optionDao.getId().equals(newOption.getId())) {
+                if (newOption.getText().length()>0 && optionDao.getId().equals(newOption.getId())) {
                     existsInNewQuestion = true;
                     break;
                 }

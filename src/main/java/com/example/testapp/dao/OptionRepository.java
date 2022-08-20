@@ -6,5 +6,5 @@ import org.springframework.data.repository.CrudRepository;
 import java.util.LinkedList;
 
 public interface OptionRepository extends CrudRepository<Option, Integer> {
-    LinkedList<Option> getByQuestionId(int questionId);
+    LinkedList<Option> getAllByQuestionId(int questionId);
 }

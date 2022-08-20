@@ -49,7 +49,7 @@ public class TestService {
         if (testRepository.existsById(test.getId())){
             throw new WebException("Test already exists", HttpStatus.BAD_REQUEST);
         }
-        if (testRepository.existsByName(test.getName())){
+        if (testRepository.existsByNameAndUserId(test.getName(), CurrentUserService.getUserId())){
             test.setName(test.getName()+"-copy");
         }
         Test testDao = TestConverter.testToEntity(test, CurrentUserService.getUserId());
@@ -71,8 +71,7 @@ public class TestService {
         LinkedList<Question> questionDaos = questionRepository.getByTestId(test.getId());
         for (QuestionDto newQuestion: test.getQuestions()
         ) {
-            Question questionDao = QuestionConverter.questionToEntity(newQuestion, test.getId());
-            questionRepository.save(questionDao);
+            questionService.addQuestion(newQuestion, test.getId());
         }
         for (Question questionDao: questionDaos
         ) {

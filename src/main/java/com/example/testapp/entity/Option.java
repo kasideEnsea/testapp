@@ -16,6 +16,6 @@ public class Option {
     private Integer questionId;
     @Column(name = "text")
     private String text;
-    @Column(name = "isCorrect")
+    @Column(name = "iscorrect")
     private Boolean isCorrect;
 }
