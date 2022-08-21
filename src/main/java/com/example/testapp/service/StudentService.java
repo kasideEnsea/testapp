@@ -41,17 +41,23 @@ public class StudentService {
                linkRepository.deleteByEmailAndTestId(email, emailListDto.getTestId());
             }
             String code = HashUtills.generateRandomAlphanumericString(10);
+            while (linkRepository.existsByRandomLink(code)){
+                code = HashUtills.generateRandomAlphanumericString(10);
+            }
             mailService.sendTestLink(email, code, emailListDto.getTestId(), test.getName());
             Link link = new Link(email, emailListDto.getTestId(), code);
             linkRepository.save(link);
         }
     }
 
-    public TestDto getStudentTestByLink(ValidDto dto) {
-        if (!linkRepository.existsByTestIdAndRandomLink(dto.getId(), dto.getCode())){
-            throw new WebException("Wrong link", HttpStatus.FORBIDDEN);
+    public TestDto getStudentTestByLink(CodeDto dto) {
+        if (linkRepository.existsByRandomLink(dto.getCode())){
+            Link link = linkRepository.getByRandomLink(dto.getCode());
+            if (link.getRightAnswersCount()>=0) {
+                return getEmptyTest(testService.getById(link.getTestId()));
+            }
         }
-        return getEmptyTest(testService.getById(dto.getId()));
+        throw new WebException("Wrong link", HttpStatus.FORBIDDEN);
     }
 
     private TestDto getEmptyTest(TestDto testDto){

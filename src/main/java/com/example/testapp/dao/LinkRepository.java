@@ -7,8 +7,8 @@ import java.util.LinkedList;
 
 public interface LinkRepository extends CrudRepository<Link, Integer> {
     boolean existsByEmailAndTestId(String email, int testId);
-    Link getByTestIdAndRandomLink(int testId, String randomLink);
+    Link getByRandomLink(String randomLink);
     void deleteByEmailAndTestId(String email, int testId);
-    boolean existsByTestIdAndRandomLink(int testId, String randomLink);
+    boolean existsByRandomLink(String randomLink);
 
 }

@@ -24,13 +24,10 @@ public class Link {
     @Column(name = "right_answers_count")
     private Integer rightAnswersCount;
 
-    /*public Link() {
-    }*/
-
     public Link(String email, Integer testId, String randomLink) {
         this.email = email;
         this.testId = testId;
         this.randomLink = randomLink;
-        this.rightAnswersCount = 0;
+        this.rightAnswersCount = -1;
     }
 }

@@ -24,7 +24,7 @@ public class StudentController {
     }
 
     @PostMapping("/getTest/")
-    public TestDto getTest(@Valid @RequestBody ValidDto dto) {
+    public TestDto getTest(@Valid @RequestBody CodeDto dto) {
         return studentService.getStudentTestByLink(dto);
     }
 }

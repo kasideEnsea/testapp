@@ -34,7 +34,7 @@ public class MailService {
         SimpleMailMessage simpleMailMessage = new SimpleMailMessage();
         simpleMailMessage.setTo(email);
         simpleMailMessage.setSubject(linkSubject);
-        simpleMailMessage.setText(linkText+"\""+testName+"\": "+link+"/test/"+"id:"+testId+"/"+"code:"+code);
+        simpleMailMessage.setText(linkText+" \""+testName+"\": "+link+"/test/"+"id:"+testId+"/"+"code:"+code);
         simpleMailMessage.setFrom(from);
         emailSender.send(simpleMailMessage);
     }

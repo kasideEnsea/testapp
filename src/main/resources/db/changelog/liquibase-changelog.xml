@@ -6,4 +6,5 @@
 
     <include file="db/changelog/patches/0001_dbCreation.sql"/>
     <include file="db/changelog/patches/0002_emailValidation.sql"/>
+    <include file="db/changelog/patches/0003_defaultRightAnswersMinusOne.sql"/>
 </databaseChangeLog>
