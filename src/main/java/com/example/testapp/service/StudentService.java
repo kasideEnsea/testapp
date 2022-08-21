@@ -33,6 +33,9 @@ public class StudentService {
         }
         for (String email: emailListDto.getEmails()
              ) {
+            if (email.length()==0){
+                return;
+            }
             Test test = testRepository.getById(emailListDto.getTestId());
             if (linkRepository.existsByEmailAndTestId(email, emailListDto.getTestId())){
                linkRepository.deleteByEmailAndTestId(email, emailListDto.getTestId());

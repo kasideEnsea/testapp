@@ -18,7 +18,7 @@ import javax.validation.Valid;
 public class StudentController {
     private final StudentService studentService;
 
-    @PostMapping("/sendLinks")
+    @PostMapping("/sendLinks/")
     public void sendLinks(@Valid @RequestBody EmailListDto dto) {
         studentService.sendTestLink(dto);
     }
