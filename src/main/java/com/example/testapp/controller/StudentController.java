@@ -5,10 +5,7 @@ import com.example.testapp.service.AuthorizationService;
 import com.example.testapp.service.RegistrationService;
 import com.example.testapp.service.StudentService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
@@ -23,8 +20,8 @@ public class StudentController {
         studentService.sendTestLink(dto);
     }
 
-    @PostMapping("/getTest/")
-    public TestDto getTest(@Valid @RequestBody CodeDto dto) {
-        return studentService.getStudentTestByLink(dto);
+    @GetMapping("/getTest/{code}")
+    public TestDto getTest(@PathVariable String code) {
+        return studentService.getStudentTestByLink(code);
     }
 }

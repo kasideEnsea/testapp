@@ -7,4 +7,5 @@ import java.util.LinkedList;
 
 public interface OptionRepository extends CrudRepository<Option, Integer> {
     LinkedList<Option> getAllByQuestionId(int questionId);
+    Option getById(int id);
 }

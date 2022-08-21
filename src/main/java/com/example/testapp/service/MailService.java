@@ -29,12 +29,12 @@ public class MailService {
         emailSender.send(simpleMailMessage);
     }
 
-    public void sendTestLink(String email, String code, int testId, String testName) {
+    public void sendTestLink(String email, String code, String testName) {
 
         SimpleMailMessage simpleMailMessage = new SimpleMailMessage();
         simpleMailMessage.setTo(email);
         simpleMailMessage.setSubject(linkSubject);
-        simpleMailMessage.setText(linkText+" \""+testName+"\": "+link+"/test/"+"id:"+testId+"/"+"code:"+code);
+        simpleMailMessage.setText(linkText+" \""+testName+"\": "+link+"/test/"+"code:"+code);
         simpleMailMessage.setFrom(from);
         emailSender.send(simpleMailMessage);
     }

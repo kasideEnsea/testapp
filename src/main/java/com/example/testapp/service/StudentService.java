@@ -44,15 +44,15 @@ public class StudentService {
             while (linkRepository.existsByRandomLink(code)){
                 code = HashUtills.generateRandomAlphanumericString(10);
             }
-            mailService.sendTestLink(email, code, emailListDto.getTestId(), test.getName());
+            mailService.sendTestLink(email, code, test.getName());
             Link link = new Link(email, emailListDto.getTestId(), code);
             linkRepository.save(link);
         }
     }
 
-    public TestDto getStudentTestByLink(CodeDto dto) {
-        if (linkRepository.existsByRandomLink(dto.getCode())){
-            Link link = linkRepository.getByRandomLink(dto.getCode());
+    public TestDto getStudentTestByLink(String code) {
+        if (linkRepository.existsByRandomLink(code)){
+            Link link = linkRepository.getByRandomLink(code);
             if (link.getRightAnswersCount()>=0) {
                 return getEmptyTest(testService.getById(link.getTestId()));
             }
