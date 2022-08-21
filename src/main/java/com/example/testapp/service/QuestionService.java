@@ -42,23 +42,30 @@ public class QuestionService {
 
     public QuestionDto addQuestion(QuestionDto question, int testId){
         if (questionRepository.existsById(question.getId())) {
-            editQuestion(question);
+            return editQuestion(question);
         }
+        Question questionDao = QuestionConverter.questionToEntity(question, testId);
+        Question savedDao = questionRepository.save(questionDao);
         for (OptionDto option: question.getOptions()
              ) {
             if (option.getText().length()>0){
                 option.setQuestionId(question.getId());
+                option.setQuestionId(savedDao.getId());
                 Option optionDao = OptionConverter.optionToEntity(option);
                 optionRepository.save(optionDao);
             }
         }
-        Question questionDao = QuestionConverter.questionToEntity(question, testId);
-        questionRepository.save(questionDao);
+
         return question;
     }
 
     public void deleteQuestion(int questionId){
         if (questionRepository.existsById(questionId)) {
+            LinkedList<Option> options = optionRepository.getAllByQuestionId(questionId);
+            for (Option option: options
+            ) {
+                optionRepository.deleteById(option.getId());
+            }
             questionRepository.deleteById(questionId);
         }
 
@@ -73,15 +80,20 @@ public class QuestionService {
             oldQuestionDao.setText(question.getText());
         }
         questionRepository.save(oldQuestionDao);
-        LinkedList<Option> optionDaos = optionRepository.getAllByQuestionId(question.getId());
+        //LinkedList<Option> optionDaos = optionRepository.getAllByQuestionId(question.getId());
         for (OptionDto newOption: question.getOptions()) {
             if (newOption.getText().length()>0) {
                 newOption.setQuestionId(question.getId());
                 Option optionDao = OptionConverter.optionToEntity(newOption);
                 optionRepository.save(optionDao);
             }
+            else{
+                if (optionRepository.existsById(newOption.getId())){
+                    optionRepository.deleteById(newOption.getId());
+                }
+            }
         }
-        for (Option optionDao: optionDaos
+        /*for (Option optionDao: optionDaos
              ) {
             boolean existsInNewQuestion = false;
             for (OptionDto newOption: question.getOptions()
@@ -94,7 +106,7 @@ public class QuestionService {
             if (!existsInNewQuestion){
                 optionRepository.delete(optionDao);
             }
-        }
+        }*/
         return question;
     }
 

@@ -1,12 +1,15 @@
 package com.example.testapp.entity;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
 @Entity
 @Table(name = "link")
 @Data
+@NoArgsConstructor
 public class Link {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,4 +23,14 @@ public class Link {
     private String randomLink;
     @Column(name = "right_answers_count")
     private Integer rightAnswersCount;
+
+    /*public Link() {
+    }*/
+
+    public Link(String email, Integer testId, String randomLink) {
+        this.email = email;
+        this.testId = testId;
+        this.randomLink = randomLink;
+        this.rightAnswersCount = 0;
+    }
 }

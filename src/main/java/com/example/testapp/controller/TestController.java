@@ -35,7 +35,6 @@ public class TestController {
 
     @PostMapping("/del/{id}")
     public void deleteTest (@PathVariable Integer id) {
-        System.out.println(testService.getById(id).getId());
         testService.delete(id);
     }
 }

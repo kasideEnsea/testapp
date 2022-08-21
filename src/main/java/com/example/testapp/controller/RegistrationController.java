@@ -26,7 +26,6 @@ public class RegistrationController {
     //Подтверждение адреса почты пользователя
     @PostMapping("/valid/")
     public AuthUserDto validate(@Valid @RequestBody ValidDto dto) {
-        System.out.println(dto);
         int id = dto.getId();
         String code = dto.getCode();
         registrationService.validate(id, code);

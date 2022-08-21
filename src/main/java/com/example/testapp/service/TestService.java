@@ -96,6 +96,11 @@ public class TestService {
         if (dao.getUserId() != CurrentUserService.getUserId()) {
             throw new WebException("Foreign test", HttpStatus.FORBIDDEN);
         }
+        LinkedList<QuestionDto> questions = questionService.getAllByTestId(testId);
+        for (QuestionDto questionDto: questions
+             ) {
+            questionService.deleteQuestion(questionDto.getId());
+        }
         testRepository.deleteById(testId);
     }
 }
