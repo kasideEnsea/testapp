@@ -13,4 +13,5 @@ public class CheckedTestDto {
     LinkedList<CheckedQuestionDto> questions;
     String email;
     Integer countOfRightAnswers;
+    Integer linkId;
 }

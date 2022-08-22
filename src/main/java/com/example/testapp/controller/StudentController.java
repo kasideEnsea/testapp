@@ -1,8 +1,6 @@
 package com.example.testapp.controller;
 
 import com.example.testapp.dto.*;
-import com.example.testapp.service.AuthorizationService;
-import com.example.testapp.service.RegistrationService;
 import com.example.testapp.service.StudentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -21,7 +19,8 @@ public class StudentController {
     }
 
     @GetMapping("/getTest/{code}")
-    public TestDto getTest(@PathVariable String code) {
+    public TestDto getTest(@Valid @PathVariable String code) {
         return studentService.getStudentTestByLink(code);
     }
+
 }

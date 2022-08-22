@@ -11,9 +11,4 @@ public class CurrentUserService {
         String subject = SecurityContextHolder.getContext().getAuthentication().getName();
         return TokenUtils.getUserId(subject);
     }
-
-    public static String getLogin() {
-        String subject = SecurityContextHolder.getContext().getAuthentication().getName();
-        return TokenUtils.getLogin(subject);
-    }
 }

@@ -13,7 +13,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.LinkedList;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -41,8 +40,8 @@ public class ResultService {
                  ) {
                 if (optionDto.getIsCorrect()){
                     Attempt attempt = new Attempt();
-                    attempt.setLink_id(link.getId());
-                    attempt.setOption_id(optionDto.getId());
+                    attempt.setLinkId(link.getId());
+                    attempt.setOptionId(optionDto.getId());
                     attemptRepository.save(attempt);
                 }
                 Option correctOption = optionRepository.getById(optionDto.getId());
@@ -66,27 +65,23 @@ public class ResultService {
         return check(link);
     }
 
-    public CheckedTestDto getCheckedTestByEmailAndTestId(String email, int testId) {
-        if (!linkRepository.existsByEmailAndTestId(email, testId)){
+    public CheckedTestDto getCheckedTestByLinkId(int linkId) {
+        if (!linkRepository.existsById(linkId)){
             throw new WebException("Link doesnt exists", HttpStatus.NOT_FOUND);
         }
-        Link link = linkRepository.getByEmailAndTestId(email, testId);
-        Test test = testRepository.getById(link.getTestId());
-        if (test.getUserId() != CurrentUserService.getUserId()) {
-            throw new WebException("Foreign test", HttpStatus.FORBIDDEN);
-        }
+        Link link = linkRepository.getById(linkId);
         return check(link);
     }
 
     private CheckedTestDto check (Link link){
-        TestDto testDto = testService.getById(link.getTestId());
+        TestDto testDto = testService.getByIdUnauthorized(link.getTestId());
         LinkedList<CheckedQuestionDto> checkedQuestions = new LinkedList<>();
         for (QuestionDto question: testDto.getQuestions()
         ) {
             LinkedList<CheckedOptionDto> checkedOptions = new LinkedList<>();
             for (OptionDto optionDto: question.getOptions()
             ) {
-                boolean isChosen = attemptRepository.existsBylink_idAndoptionId(link.getId(), optionDto.getId());
+                boolean isChosen = attemptRepository.existsByLinkIdAndOptionId(link.getId(), optionDto.getId());
                 CheckedOptionDto checkedOptionDto = new CheckedOptionDto(optionDto.getId(), optionDto.getQuestionId(),
                         optionDto.getText(), isChosen, optionDto.getIsCorrect());
                 checkedOptions.add(checkedOptionDto);
@@ -94,7 +89,7 @@ public class ResultService {
             checkedQuestions.add(new CheckedQuestionDto(question.getId(), question.getText(), checkedOptions));
         }
         return new CheckedTestDto(testDto.getId(),
-                testDto.getName(), checkedQuestions, link.getEmail(), link.getRightAnswersCount());
+                testDto.getName(), checkedQuestions, link.getEmail(), link.getRightAnswersCount(), link.getId());
     }
 
     public LinkedList<CheckedTestDto> getAllByTestId(Integer id) {
@@ -106,7 +101,9 @@ public class ResultService {
         }
         for (Link link: links
              ) {
-            checkedTestDtos.add(check(link));
+            if (link.getRightAnswersCount()>0){
+                checkedTestDtos.add(check(link));
+            }
         }
         return checkedTestDtos;
     }
@@ -120,7 +117,9 @@ public class ResultService {
         LinkedList<Link> links = linkRepository.getAllByEmail(currentLink.getEmail());
         for (Link link: links
         ) {
-            checkedTestDtos.add(check(link));
+            if (link.getRightAnswersCount()>0){
+                checkedTestDtos.add(check(link));
+            }
         }
         return checkedTestDtos;
     }

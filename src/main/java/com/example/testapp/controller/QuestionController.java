@@ -3,11 +3,7 @@ package com.example.testapp.controller;
 
 import com.example.testapp.dto.OptionDto;
 import com.example.testapp.dto.QuestionDto;
-import com.example.testapp.dto.TestDto;
-import com.example.testapp.entity.Option;
-import com.example.testapp.entity.Question;
 import com.example.testapp.service.QuestionService;
-import com.example.testapp.service.TestService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 

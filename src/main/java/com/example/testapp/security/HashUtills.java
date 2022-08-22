@@ -23,7 +23,6 @@ public class HashUtills {
             byte[] hash = digest.digest(passwordWithSalt.getBytes(StandardCharsets.UTF_8));
             return Base64.getEncoder().encodeToString(hash);
         } catch (NoSuchAlgorithmException e) {
-            System.out.println(e.getMessage());
             return null;
         }
     }

@@ -1,21 +1,16 @@
 package com.example.testapp.service;
 
-import com.example.testapp.converter.TestConverter;
 import com.example.testapp.dao.LinkRepository;
 import com.example.testapp.dao.TestRepository;
-import com.example.testapp.dao.UserRepository;
 import com.example.testapp.dto.*;
 import com.example.testapp.entity.Link;
 import com.example.testapp.entity.Test;
-import com.example.testapp.entity.User;
 import com.example.testapp.exception.WebException;
 import com.example.testapp.security.HashUtills;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-
-import java.util.LinkedList;
 
 @Service
 @RequiredArgsConstructor
@@ -38,7 +33,8 @@ public class StudentService {
             }
             Test test = testRepository.getById(emailListDto.getTestId());
             if (linkRepository.existsByEmailAndTestId(email, emailListDto.getTestId())){
-               linkRepository.deleteByEmailAndTestId(email, emailListDto.getTestId());
+                Link link = linkRepository.getByEmailAndTestId(email, emailListDto.getTestId());
+                linkRepository.delete(link);
             }
             String code = HashUtills.generateRandomAlphanumericString(10);
             while (linkRepository.existsByRandomLink(code)){
@@ -53,8 +49,9 @@ public class StudentService {
     public TestDto getStudentTestByLink(String code) {
         if (linkRepository.existsByRandomLink(code)){
             Link link = linkRepository.getByRandomLink(code);
-            if (link.getRightAnswersCount()>=0) {
-                return getEmptyTest(testService.getById(link.getTestId()));
+            if (link.getRightAnswersCount()<0) {
+                TestDto test = testService.getByIdUnauthorized(link.getTestId());
+                return getEmptyTest(test);
             }
         }
         throw new WebException("Wrong link", HttpStatus.FORBIDDEN);

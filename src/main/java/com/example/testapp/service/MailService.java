@@ -24,7 +24,7 @@ public class MailService {
         SimpleMailMessage simpleMailMessage = new SimpleMailMessage();
         simpleMailMessage.setTo(email);
         simpleMailMessage.setSubject(validationSubject);
-        simpleMailMessage.setText(validationText+link+"id:"+id+"/"+"code:"+code);
+        simpleMailMessage.setText(validationText+link+"postCheck/"+id+"/"+code);
         simpleMailMessage.setFrom(from);
         emailSender.send(simpleMailMessage);
     }
@@ -34,7 +34,7 @@ public class MailService {
         SimpleMailMessage simpleMailMessage = new SimpleMailMessage();
         simpleMailMessage.setTo(email);
         simpleMailMessage.setSubject(linkSubject);
-        simpleMailMessage.setText(linkText+" \""+testName+"\": "+link+"/test/"+"code:"+code);
+        simpleMailMessage.setText(linkText+" \""+testName+"\": "+link+"begintest/"+code);
         simpleMailMessage.setFrom(from);
         emailSender.send(simpleMailMessage);
     }

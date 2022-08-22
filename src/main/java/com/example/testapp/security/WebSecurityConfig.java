@@ -28,7 +28,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         http
                 .authorizeRequests()
-                .mvcMatchers("/auth/**", "/register/**").permitAll()
+                .mvcMatchers("/auth/**", "/register/**", "/student/**", "/result/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .addFilterBefore(new JwtAuthenticationTokenFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class);

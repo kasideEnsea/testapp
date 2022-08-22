@@ -13,7 +13,7 @@ public class Attempt {
     @Column(name = "id")
     private Integer id;
     @Column(name = "option_id")
-    private Integer option_id;
+    private Integer optionId;
     @Column(name = "link_id")
-    private Integer link_id;
+    private Integer linkId;
 }

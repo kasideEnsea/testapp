@@ -13,4 +13,5 @@ public interface LinkRepository extends CrudRepository<Link, Integer> {
     boolean existsByRandomLink(String randomLink);
     LinkedList<Link> getAllByTestId(int testId);
     LinkedList<Link> getAllByEmail(String email);
+    Link getById(int id);
 }

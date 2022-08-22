@@ -1,6 +1,4 @@
 package com.example.testapp.service;
-
-import com.example.testapp.converter.QuestionConverter;
 import com.example.testapp.converter.TestConverter;
 import com.example.testapp.dao.QuestionRepository;
 import com.example.testapp.dao.TestRepository;
@@ -42,6 +40,14 @@ public class TestService {
         if (dao.getUserId() != CurrentUserService.getUserId()) {
             throw new WebException("Foreign test", HttpStatus.FORBIDDEN);
         }
+        return TestConverter.entityToTest(dao, questionService.getAllByTestId(dao.getId()));
+    }
+
+    public TestDto getByIdUnauthorized(int id) {
+        if (!testRepository.existsById(id)) {
+            throw new WebException("Test doesnt exists", HttpStatus.NOT_FOUND);
+        }
+        Test dao = testRepository.getById(id);
         return TestConverter.entityToTest(dao, questionService.getAllByTestId(dao.getId()));
     }
 
